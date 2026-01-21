@@ -40,12 +40,12 @@ jobs:
                   "type": "ws",
                   "path": "/",
                   "headers": {
-                    "Host": "kr.stockhunter.qzz.io"   // 你的 host_name
+                    "Host": "kr."   // 你的 host_name
                   }
                 },
                 "tls": {
                   "enabled": true,
-                  "server_name": "kr.stockhunter.qzz.io",
+                  "server_name": "kr.",
                   "insecure": false
                 }
               },
