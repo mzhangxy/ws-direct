@@ -1,0 +1,70 @@
+jobs:
+  proxy-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install sing-box (推荐，轻量)
+        run: |
+          curl -fsSL https://sing-box.sagernet.org/install.sh | bash -s -- -f
+          # 或手动下载最新版 https://github.com/SagerNet/sing-box/releases
+
+      - name: Create sing-box config with your node
+        run: |
+          cat << 'EOF' > config.json
+          {
+            "inbounds": [
+              {
+                "type": "socks",
+                "tag": "socks-in",
+                "listen": "127.0.0.1",
+                "listen_port": 10801
+              },
+              {
+                "type": "http",
+                "tag": "http-in",
+                "listen": "127.0.0.1",
+                "listen_port": 10802
+              }
+            ],
+            "outbounds": [
+              {
+                "type": "vmess",          // 或 "vless"
+                "tag": "proxy",
+                "server": "ip.sb",        // 你的 youxuan IP
+                "server_port": 443,
+                "uuid": "539234bc-9f63-4185-9e67-2f2db8b5598c",
+                "security": "auto",
+                "alter_id": 0,
+                "transport": {
+                  "type": "ws",
+                  "path": "/vms-3456789?ed=2048",
+                  "headers": {
+                    "Host": "kr.stockhunter.qzz.io"   // 你的 host_name
+                  }
+                },
+                "tls": {
+                  "enabled": true,
+                  "server_name": "kr.stockhunter.qzz.io",
+                  "insecure": false
+                }
+              },
+              { "type": "direct", "tag": "direct" }
+            ]
+          }
+          EOF
+
+      - name: Start proxy in background
+        run: sing-box run -c config.json &
+
+      - name: Wait for proxy ready
+        run: sleep 8 && curl --socks5 localhost:10801 http://ip.sb
+
+      - name: Use the proxy
+        env:
+          http_proxy: http://127.0.0.1:10802
+          https_proxy: http://127.0.0.1:10802
+          all_proxy: socks5h://127.0.0.1:10801
+        run: |
+          curl https://www.google.com
+          # 后续所有命令都会走代理
