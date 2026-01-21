@@ -33,12 +33,12 @@ jobs:
                 "tag": "proxy",
                 "server": "ip.sb",        // 你的 youxuan IP
                 "server_port": 443,
-                "uuid": "539234bc-9f63-4185-9e67-2f2db8b5598c",
+                "uuid": "",
                 "security": "auto",
                 "alter_id": 0,
                 "transport": {
                   "type": "ws",
-                  "path": "/vms-3456789?ed=2048",
+                  "path": "/",
                   "headers": {
                     "Host": "kr.stockhunter.qzz.io"   // 你的 host_name
                   }
